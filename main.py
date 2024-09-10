@@ -13,9 +13,7 @@ def auth_menu():
             result_login = 2
             if not result_login['is_login']:
                 auth_menu()
-            elif result_login['role'] == 'super_admin':
                 pass
-                auth_menu()
             elif result_login['role'] == 'admin':
                 pass
             elif result_login['role'] == 'user':
