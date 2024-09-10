@@ -18,8 +18,6 @@ def auth_menu():
                 auth_menu()
             elif result_login['role'] == 'admin':
                 pass
-            elif result_login['role'] == 'manager':
-                pass
             elif result_login['role'] == 'user':
                 pass
         elif user_input == 3:
