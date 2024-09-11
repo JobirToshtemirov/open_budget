@@ -20,7 +20,7 @@ You can install psycopg2 by running:
     pip install psycopg2
 Installation
 Clone the repository:
-git clone https://github.com/your-username/project-name.git
+    git clone https://github.com/your-username/project-name.git
 cd project-name
 Set up PostgreSQL:
 Create a new PostgreSQL database.
@@ -28,25 +28,25 @@ Modify the config.py file (or equivalent configuration file) with your PostgreSQ
 Example:
 
 
-DB_HOST = "localhost"
-DB_NAME = "your_database"
-DB_USER = "your_username"
-DB_PASSWORD = "your_password"
+    DB_HOST = "localhost"
+    DB_NAME = "your_database"
+    DB_USER = "your_username"
+    DB_PASSWORD = "your_password"
 Create database tables:
 Run the provided SQL script to create the necessary tables.
 
 
-psql -U your_username -d your_database -f setup.sql
+    psql -U your_username -d your_database -f setup.sql
 Install dependencies:
 Use pip to install required Python libraries:
 
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 Usage
 Start the application:
 
 
-python main.py
+    python main.py
 Admin functionality:
 Admin users can manage voting seasons and control data related to areas, cities, and neighborhoods.
 Admins have full CRUD access to all relevant data.
