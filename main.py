@@ -23,11 +23,11 @@ def auth_menu():
                 admin_menu()
                 auth_menu()
             elif result_login['role'] == 'user':
-                print("Hi barbie")
+                user_menu()
                 auth_menu()
         elif user_input == 3:
             print("\nGood bye!")
-            pass         
+            auth.logout()         
             auth_menu()
         else:
             print("Invalid input")
