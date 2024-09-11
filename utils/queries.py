@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS season (
     Create_tenders_table ='''
 CREATE TABLE IF NOT EXISTS tender (
     id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users (id),
     district INTEGER REFERENCES districts(id),
     description TEXT,
     season_id INTEGER REFERENCES season(id),

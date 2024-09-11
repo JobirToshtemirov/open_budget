@@ -28,7 +28,6 @@ def auth_menu():
         elif user_input == 3:
             print("\nGood bye!")
             auth.logout()         
-            auth_menu()
         else:
             print("Invalid input")
             auth_menu()
@@ -42,6 +41,7 @@ def admin_menu():
 1. Manage season
 2. Manage tender
 3. All statistics
+4. Back to auth menu
 """)
     try:
         choice =input("Choose one of the menu: ")
@@ -54,6 +54,9 @@ def admin_menu():
         elif choice == '3':
             statistics_menu()
             admin_menu()
+        elif choice == '4':
+            print("Back to auth menu")
+            auth_menu()
         else:
             print("Invalid input")
             admin_menu()
@@ -197,5 +200,5 @@ def statistics_menu():
         statistics_menu()
 
 if __name__ == '__main__':
-    threading.Thread(target=create_tables()).start()
     threading.Thread(target=auth_menu()).start()
+    threading.Thread(target=create_tables()).start()

@@ -54,7 +54,8 @@ class Auth:
         except Exception as e:
             print(f"An error occurred while registering: {str(e)}")
             return False
-
+    
+    
     @log_decorator
     def login(self):
         """
