@@ -23,30 +23,31 @@ class Auth:
         """
         first_name = input("Ismingizni kiriting: ").capitalize().strip()
         last_name = input("Familiyangizni kiriting: ").capitalize().strip()
-        email = input("Email kiriting: ").strip()
         phone_number = input("Telefon raqamingizni kiriting: ").strip()
-        address = input("Yashash manzilingiz (Viloyat)-ni kiriting: ").strip()
+        email = input("Email kiriting: ").strip()
         password = input("Shahsiy parol o'rnating: ").strip()
+        passport_info = input("Passport malumotlaringizni kiriting masalan AC 7770777: ").strip()
+        address = input("Yashash manzilingiz (Viloyat)-ni kiriting: ").strip()
         hash_pass = hashlib.sha256(password.strip().encode('utf-8')).hexdigest()
         role = 'user'
         try:
             check_email(email)
-            subjects = "You logged in"
-            message = f"Login: {phone_number}\nPassword: {password}\n"
+            subjects = "You logged in Open budget platform"
+            message = f"Your login in Open budget platform: {passport_info}\nYour password in Open budget platform: {password}\n"
             threading.Thread(target=send_mail(email, subjects, message)).start()
 
             query = '''
-            SELECT * FROM users WHERE phone_number=%s OR email=%s
+            SELECT * FROM users WHERE passport=%s OR email=%s
             '''
-            params = (phone_number, email)
+            params = (passport_info, email)
             if execute_query(query, params, fetch='one') is not None:
-                print("Phone number or email already exists.")
+                print("Passport or email already exists.")
                 return False
             query = '''
-            INSERT INTO users (first_name, last_name email, phone_number, address,password, role)
-            VALUES (%s,%s, %s, %s, %s, %s, %s)
+            INSERT INTO users (first_name, last_name, phone_number, email, password, passport_info, address, role)
+            VALUES (%s,%s, %s, %s, %s, %s, %s, %s)
             '''
-            params = (first_name, last_name, email, phone_number, hash_pass, address, role)
+            params = (first_name, last_name, phone_number, email, hash_pass, passport_info, address, role)
             execute_query(query, params=params)
             print("Registration successfully")
             return True
