@@ -1,9 +1,9 @@
 import psycopg2
-from decorator.decorator import log_decorator
+from Decorator.decorator import log_decorator
 
 from psycopg2.extras import DictCursor
 
-from database.config import config
+from Database.config import config
 
 
 class Database:

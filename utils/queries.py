@@ -1,4 +1,4 @@
-from database.db_settings import execute_query
+from Database.db_settings import execute_query
 
 
 
@@ -34,8 +34,11 @@ CREATE TABLE IF NOT EXISTS users (
     last_name VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20),
     email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
     passport_info VARCHAR(100),
-    address TEXT
+    address TEXT,
+    role VARCHAR(12) NOT NULL,
+    status BOOLEAN DEFAULT FALSE
 );'''
 
 
@@ -43,7 +46,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS season (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    status BOOLEAN
+    status BOOLEAN DEFAULT FALSE
 );'''
 
 
@@ -53,7 +56,7 @@ CREATE TABLE IF NOT EXISTS tender (
     district INTEGER REFERENCES districts(id),
     description TEXT,
     season_id INTEGER REFERENCES season(id),
-    status BOOLEAN
+    status BOOLEAN DEFAULT FALSE
 );'''
 
 
@@ -71,7 +74,7 @@ CREATE TABLE IF NOT EXISTS offers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    status BOOLEAN,
+    status BOOLEAN DEFAULT FALSE,
     season_id INTEGER REFERENCES season(id),
     user_id INTEGER REFERENCES users(id)
 );'''

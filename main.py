@@ -1,5 +1,5 @@
 import threading
-from utils.queries import create_tables
+from Utils.queries import create_tables
 def auth_menu():
     print('''
 1. Register
@@ -32,8 +32,7 @@ def auth_menu():
     except Exception as e:
         print(f'Error: {e}')
         auth_menu()
-        create_tables()
 
 if __name__ == '__main__':
-    threading.Thread(target=auth_menu()).start
     threading.Thread(target=create_tables()).start()
+    threading.Thread(target=auth_menu()).start

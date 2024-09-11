@@ -1,9 +1,9 @@
 import smtplib
 
 import threading
-from database.db_settings import execute_query
-from decorator.decorator import log_decorator
-from utils.email import send_mail
+from Database.db_settings import execute_query
+from Decorator.decorator import log_decorator
+from Utils.email import send_mail
 
 
 class EmailSendMessage:
