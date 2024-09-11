@@ -33,9 +33,9 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20),
-    email VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    passport_info VARCHAR(100),
+    passport_info VARCHAR(100) NOT NULL UNIQUE,
     address TEXT,
     role VARCHAR(12) NOT NULL,
     status BOOLEAN DEFAULT FALSE

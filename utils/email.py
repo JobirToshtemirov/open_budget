@@ -1,9 +1,7 @@
 import smtplib
-
 import threading
 from Database.db_settings import execute_query
 from Decorator.decorator import log_decorator
-from Utils.email import send_mail
 
 
 class EmailSendMessage:
@@ -31,7 +29,7 @@ class EmailSendMessage:
             print("No users found.")
             return False
 
-
+@log_decorator
 def send_mail(to_user, subject, message):
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
@@ -47,7 +45,7 @@ def send_mail(to_user, subject, message):
     except smtplib.SMTPException as e:
         print(f"Failed {e}")
 
-
+@log_decorator
 def check_email(email):
     """
     Check if the email is valid.

@@ -10,11 +10,8 @@ ADMIN_LOGIN = "password"
 ADMIN_PASSWORD = "login"
 
 
-class Auth:
-    def __init__(self):
-        self.created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").__str__()
-        self.__database = Database()
 
+class Auth:
     @log_decorator
     def register(self):
         """
@@ -37,7 +34,7 @@ class Auth:
             threading.Thread(target=send_mail(email, subjects, message)).start()
 
             query = '''
-            SELECT * FROM users WHERE passport=%s OR email=%s
+            SELECT * FROM users WHERE passport_info=%s OR email=%s
             '''
             params = (passport_info, email)
             if execute_query(query, params, fetch='one') is not None:
@@ -65,26 +62,26 @@ class Auth:
         Updates the user's login status to True upon successful login.
         """
         try:
-            phone_number: str = input("Phone number: ").strip()
-            password: str = hashlib.sha256(input("Password: ").strip().encode('utf-8')).hexdigest()
+            passport_info: str = input("Emailingiz ga borgan loginingizni kiriting: ").strip()
+            password: str = hashlib.sha256(input("Parolingizni kiriting: ").strip().encode('utf-8')).hexdigest()
 
-            if phone_number == ADMIN_LOGIN and password == hashlib.sha256(
+            if passport_info == ADMIN_LOGIN and password == hashlib.sha256(
                     ADMIN_PASSWORD.encode('utf-8')).hexdigest():
-                return {'is_login': True, 'role': '_admin'}
+                return {'is_login': True, 'role': 'admin'}
 
             query = '''
-            SELECT role FROM users WHERE phone_number=%s AND password=%s
+            SELECT role FROM users WHERE passport_info=%s AND password=%s
             '''
-            params = (phone_number, password)
+            params = (passport_info, password,)
             user = execute_query(query, params, fetch='one')
 
             if user is None:
-                print("Invalid phone_number or password.")
-                return {'is_login': False}
+                print("Invalid passport info or password.")
+                return {'is_login': False, 'role': 'user'}
 
             # Correctly update the status for a successful login
-            update_query = 'UPDATE users SET status=TRUE WHERE phone_number=%s'
-            execute_query(update_query, params=(phone_number,))
+            update_query = 'UPDATE users SET status=TRUE WHERE passport_info=%s'
+            execute_query(update_query, params=(passport_info))
 
             return {'is_login': True, 'role': user['role']}
         except ValueError:
@@ -105,3 +102,5 @@ class Auth:
         query = 'UPDATE users SET status=FALSE;'
         execute_query(query)
         return True
+
+   
