@@ -1,7 +1,7 @@
 import threading
 from Database.db_settings import execute_query
 from Decorator.decorator import log_decorator
-from Utils.email import check_email
+
 
 class Season:
 
@@ -21,7 +21,7 @@ class Season:
                     VALUES (%s)
                     '''
             params = (name,)
-            threading.Thread(target=execute_query(query, params=params))
+            threading.Thread(target=execute_query(query, params=params)).start()
             print("Season created successfully successfully")
             return True
         except ValueError:
@@ -72,7 +72,7 @@ class Season:
             SET status = TRUE
             WHERE id = %s
             '''
-            threading.Thread(target=execute_query(start_season, params=(season_id,)))
+            threading.Thread(target=execute_query(start_season, params=(season_id,))).start()
 
             print(f"Season {season_id} has been started.")
             return True
@@ -91,7 +91,7 @@ class Season:
             SET status = FALSE
             WHERE id = %s
             '''
-            threading.Thread(target=execute_query(end_season, params=(season_id,)))
+            threading.Thread(target=execute_query(end_season, params=(season_id,))).start()
             print(f"Season {season_id} has been ended.")
             return True
         except Exception as e:
@@ -125,7 +125,7 @@ class Tender:
             tender_id = input("Enter the tender ID: ").strip()
             name = input("Enter new name: ").capitalize().strip()
             description = input("Enter new description: ").strip()
-            threading.Thread(target=execute_query(name, description, tender_id,)).start()
+            threading.Thread(target=execute_query, args=(name, description, tender_id,)).start()
             print("Tender updated successfully!")
             return None
         except Exception as e:
@@ -142,7 +142,7 @@ class Tender:
             tender_id = input("Enter the tender ID: ").strip()
             query = '''DELETE  FROM tender WHERE id %s '''
             params =(tender_id)
-            threading.Thread(target=execute_query(query,params,)).start()
+            threading.Thread(target=execute_query, args=(query,params,)).start()
             print("Tender deleted successfully!")
             return None
         except Exception as e:
@@ -194,7 +194,7 @@ class Statistics:
                 SELECT id, first_name, last_name, phone_number, email
                 FROM users
             '''
-            users = threading.Thread(target=execute_query(query, fetch='all'))
+            users = execute_query(query, fetch='all')
             if users:
                 print("\nAll Users:")
                 for user in users:
@@ -205,19 +205,21 @@ class Statistics:
                     print(f"Phone_number:{phone_number} ")
                     print(f"Email: {email}")
                 return True
-            return False
+            print("User not found")
         except Exception as e:
             print(f"An error occurred while retrieving users: {str(e)}")
             return False
+    threading.Thread(target=show_all_users,)
 
-    def show_all_votes():
+    def show_all_votes(votes):
         try:
             query = '''
                 SELECT COUNT(*) AS total_votes, user_id
                 FROM votes
                 GROUP BY user_id
             '''
-            votes = threading.Thread(target=execute_query(query, fetch='all'))
+            votes = execute_query(query, fetch='all')
+            threading.Thread(execute_query, args=(query,votes)).start()
             if votes:
                 print("\nTotal Votes:")
                 for vote in votes:
@@ -230,7 +232,7 @@ class Statistics:
             print(f"An error occurred while retrieving votes: {str(e)}")
             return False
         
-    def show_all_tenders():
+    def show_all_tenders(tenders):
 
         """Show all tenders in the database"""
 
@@ -239,7 +241,8 @@ class Statistics:
                 SELECT id, name, description, status
                 FROM tender
             '''
-            tenders = threading.Thread(target=execute_query(query, fetch='all'))
+            tenders = execute_query(query, fetch='all')
+            threading.Thread(target=execute_query, args=(query,tenders)).start()
             if tenders:
                 print("\nAll Tenders:")
                 for tender in tenders:
@@ -263,7 +266,8 @@ class Application:
                 SELECT id, name, description, status, season_id, user_id
                 FROM applications
             '''
-            applications = threading.Thread(target=execute_query(query, fetch='all'))
+            applications= execute_query(query, fetch='all')
+            threading.Thread(target= applications).start()
             if applications:
                 print("\nAll Applications:")
                 for application in applications:
@@ -326,7 +330,8 @@ class User:
                 FROM users
                 WHERE status = True
             '''
-            user_data = threading.Thread(target=execute_query(query, fetch='one'))
+            user_data =(execute_query(query, fetch='one'))
+            threading.Thread(target=user_data)
 
             if user_data:
                 id,first_name, last_name,  phone_number, email, address, role, status = user_data
@@ -362,7 +367,8 @@ class User:
                 WHERE user_id= %s
             '''
             params = (user_id,)
-            tenders = threading.Thread(target=execute_query(query, params=params, fetch='all'))
+            tenders= execute_query(query, params=params, fetch='all')
+            threading.Thread(target=tenders).start()
             if tenders:
                 print("\nYour Tenders:")
                 for tender in tenders:
@@ -391,21 +397,23 @@ class User:
                 WHERE user_id= %s
             '''
             params = (user_id,)
-            applications =threading.Thread(target=execute_query(query, params=params, fetch='all'))
+            applications =execute_query(query, params=params, fetch='all')
             if applications:
                 print("\nYour Applications:")
                 for application in applications:
-                    id, name, description, status, season_id = application
+                    id, name, description, status,  season_id = application
                     print(f"ID: {id}")
                     print(f"Name: {name}")
                     print(f"Description: {description}")
-                    print(f"Season ID: {season_id}")
                     print(f"Status: {'True' if status else 'False'}")
+                    print(f"Season ID: {season_id}")
                 return True
-            return False
+            print("No Applications")
         except Exception as e:
             print(f"Error retrieving applications: {e}")
             return False
+    threading.Thread(target = user_applications).start()
+            
         
     @log_decorator
     def user_votes(self):
@@ -417,7 +425,8 @@ class User:
                 WHERE user_id= %s
             '''
             params = (user_id,)
-            votes = threading.Thread(target=execute_query(query, params=params, fetch='one'))
+            votes = execute_query(query, params=params, fetch='one')
+            threading.Thread(target = votes,).start()
             if votes:
                 total_votes = votes['total_votes']
                 print(f"\nTotal Votes: {total_votes}")

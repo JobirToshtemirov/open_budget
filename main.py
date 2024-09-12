@@ -3,12 +3,12 @@ from Utils.queries import create_tables
 from Auth.auth import Auth
 from Admin.admin import User, Season, Tender, Statistics, Application
 
-user = User
-season = Season
-tender= Tender
-statistics = Statistics
-application = Application
-auth=Auth
+user = User()
+season = Season()
+tender= Tender()
+statistics = Statistics()
+application = Application()
+auth=Auth()
 
 
 def auth_menu():
@@ -186,7 +186,7 @@ def statistics_menu():
 1. Show all users
 2. Show all votes 
 3. Show all tenders
-4. Bach to admin menu
+4. Back to admin menu
 5. Back to auth menu
 """)
     try:

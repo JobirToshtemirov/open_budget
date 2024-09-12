@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS tenders (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     user_id INTEGER REFERENCES users (id),
-    season_id INTEGER REFERENCES season(id),
+    season_id INTEGER REFERENCES seasons(id),
     status BOOLEAN DEFAULT FALSE
 );'''
 
@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS tenders (
 CREATE TABLE IF NOT EXISTS votes (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    season_id INTEGER REFERENCES season(id),
-    tender_id INTEGER REFERENCES tender(id)
+    season_id INTEGER REFERENCES seasons(id),
+    tender_id INTEGER REFERENCES tenders(id)
 );'''
 
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS applications (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     status BOOLEAN DEFAULT FALSE,
-    season_id INTEGER REFERENCES season(id),
+    season_id INTEGER REFERENCES seasons(id),
     user_id INTEGER REFERENCES users(id)
 );'''
 
