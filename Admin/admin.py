@@ -21,7 +21,7 @@ class Season:
                     VALUES (%s)
                     '''
             params = (name,)
-            execute_query(query, params=params)
+            threading.Thread(target=execute_query(query, params=params))
             print("Season created successfully successfully")
             return True
         except ValueError:
@@ -194,7 +194,7 @@ class Statistics:
                 SELECT id, first_name, last_name, phone_number, email
                 FROM users
             '''
-            users = execute_query(query, fetch='all')
+            users = threading.Thread(target=execute_query(query, fetch='all'))
             if users:
                 print("\nAll Users:")
                 for user in users:
@@ -217,7 +217,7 @@ class Statistics:
                 FROM votes
                 GROUP BY user_id
             '''
-            votes = execute_query(query, fetch='all')
+            votes = threading.Thread(target=execute_query(query, fetch='all'))
             if votes:
                 print("\nTotal Votes:")
                 for vote in votes:
@@ -239,7 +239,7 @@ class Statistics:
                 SELECT id, name, description, status
                 FROM tender
             '''
-            tenders = execute_query(query, fetch='all')
+            tenders = threading.Thread(target=execute_query(query, fetch='all'))
             if tenders:
                 print("\nAll Tenders:")
                 for tender in tenders:
@@ -257,20 +257,76 @@ class Statistics:
 
 class Application:
 
-    pass
+    def show_all_applications(self):
+        try:
+            query = '''
+                SELECT id, name, description, status, season_id, user_id
+                FROM applications
+            '''
+            applications = threading.Thread(target=execute_query(query, fetch='all'))
+            if applications:
+                print("\nAll Applications:")
+                for application in applications:
+                    id, name, description, status ,season_id, user_id = application
+                    print(f"ID: {id}")
+                    print(f"Name: {name}") 
+                    print(f"Description: {description}")
+                    print(f"Status: {'True' if status else 'False'}")
+                    print(f"Season ID: {season_id}")
+                    print(f"User ID: {user_id}")
+                return True
+            return False
+        except Exception as e:
+            print(f"An error occurred while retrieving applications: {str(e)}")
+            return False
+
+
+    def accept_application():
+        try:
+            application_id = input("Enter the application ID: ").strip()
+            accept_application = '''
+                UPDATE applications
+                SET status = TRUE
+                WHERE id = %s
+            '''
+            threading.Thread(target=execute_query(accept_application, params=(application_id,))).start()
+            print(f"Application {application_id} has been accepted.")
+            return True
+        except Exception as e:
+            print(f"An error occurred while accepting application: {str(e)}")
+            return False
+        
+    def refuse_application():
+        try:
+            application_id = input("Enter the application ID: ").strip()
+            refuse_application = '''
+                UPDATE applications
+                SET status = FALSE
+                WHERE id = %s
+            '''
+            threading.Thread(target=execute_query(refuse_application, params=(application_id,))).start()
+            print(f"Application {application_id} has been refused.")
+            return True
+        except Exception as e:
+            print(f"An error occurred while refusing application: {str(e)}")
+            return False
+        
 
 
 class User:
 
     @log_decorator
     def user_profile(self):
+
+        """Show user's profile information"""
+
         try:
             query = '''
                 SELECT id, first_name, last_name,  phone_number, email, address, role, status
                 FROM users
                 WHERE status = True
             '''
-            user_data = execute_query(query, fetch='one')
+            user_data = threading.Thread(target=execute_query(query, fetch='one'))
 
             if user_data:
                 id,first_name, last_name,  phone_number, email, address, role, status = user_data
@@ -291,3 +347,83 @@ class User:
         except Exception as e:
             print(f"Error retrieving profile: {e}")
             return False
+        
+    
+    @log_decorator
+    def user_tenders(self):
+
+        """Show user's tenders"""
+
+        try:
+            user_id = input("Enter your ID: ").strip()
+            query = '''
+                SELECT id, name, description, status,season_id,
+                FROM tender
+                WHERE user_id= %s
+            '''
+            params = (user_id,)
+            tenders = threading.Thread(target=execute_query(query, params=params, fetch='all'))
+            if tenders:
+                print("\nYour Tenders:")
+                for tender in tenders:
+                    id, name, description,season_id, status= tender
+                    print(f"ID: {id}")
+                    print(f"Name: {name}")
+                    print(f"Description: {description}")
+                    print(f"Season ID: {season_id}")
+                    print(f"Status: {'True' if status else 'False'}")
+                return True
+            return False
+        except Exception as e:
+            print(f"Error retrieving tenders: {e}")
+            return False
+        
+    
+    @log_decorator
+    def user_applications(self):
+
+        """Show user's applications"""
+        try:
+            user_id = input("Enter your ID: ").strip()
+            query = '''
+                SELECT id, name, description, status, season_id
+                FROM applications
+                WHERE user_id= %s
+            '''
+            params = (user_id,)
+            applications =threading.Thread(target=execute_query(query, params=params, fetch='all'))
+            if applications:
+                print("\nYour Applications:")
+                for application in applications:
+                    id, name, description, status, season_id = application
+                    print(f"ID: {id}")
+                    print(f"Name: {name}")
+                    print(f"Description: {description}")
+                    print(f"Season ID: {season_id}")
+                    print(f"Status: {'True' if status else 'False'}")
+                return True
+            return False
+        except Exception as e:
+            print(f"Error retrieving applications: {e}")
+            return False
+        
+    @log_decorator
+    def user_votes(self):
+        try:
+            user_id = input("Enter your ID: ").strip()
+            query = '''
+                SELECT COUNT(*) AS total_votes
+                FROM votes
+                WHERE user_id= %s
+            '''
+            params = (user_id,)
+            votes = threading.Thread(target=execute_query(query, params=params, fetch='one'))
+            if votes:
+                total_votes = votes['total_votes']
+                print(f"\nTotal Votes: {total_votes}")
+                return True
+            return False
+        except Exception as e:
+            print(f"Error retrieving votes: {e}")
+            return False
+        

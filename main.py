@@ -1,12 +1,13 @@
 import threading
 from Utils.queries import create_tables
 from Auth.auth import Auth
-from Admin.admin import User, Season, Tender, Statistics
+from Admin.admin import User, Season, Tender, Statistics, Application
 
 user = User
 season = Season
 tender= Tender
 statistics = Statistics
+application = Application
 auth=Auth
 
 
@@ -62,7 +63,7 @@ def admin_menu():
             statistics_menu()
             admin_menu()
         elif choice == '4':
-            user.manage_application()
+            application_menu()
             admin_menu()
         elif choice == '5':
             print("Back to auth menu")
@@ -88,13 +89,13 @@ def user_menu():
             user.user_profile()
             user_menu()
         elif choice == '2':
-            user_tenders()
+            user.user_tenders()
             user_menu()
         elif choice == '3':
-            user_applications()
+            user.user_applications()
             user_menu()
         elif choice == '4':
-            user_votes()
+            user.user_votes()
             user_menu()
         elif choice == '5':
             print("Back to auth menu")
@@ -221,13 +222,13 @@ def application_menu():
     try:
         choice = input("Choose application: ")
         if choice == '1':
-            show_all_applications()
+            application.show_all_applications()
             application_menu()
         elif choice == '2':
-            accept_application()
+            application.accept_application()
             application_menu()
         elif choice == '3':
-            refuse_application()
+            application.refuse_application()
             application_menu()
         elif choice == '4':
             admin_menu()

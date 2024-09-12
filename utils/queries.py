@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 
     Create_seasons_table ='''
-CREATE TABLE IF NOT EXISTS season (
+CREATE TABLE IF NOT EXISTS seasons (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     start_date DATE NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS season (
 
 
     Create_tenders_table ='''
-CREATE TABLE IF NOT EXISTS tender (
+CREATE TABLE IF NOT EXISTS tenders (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50)NOT NULL,
     description TEXT NOT NULL,
@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS votes (
 );'''
 
 
-    Create_application_table = '''
-CREATE TABLE IF NOT EXISTS offers (
+    Create_applications_table = '''
+CREATE TABLE IF NOT EXISTS applications (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
@@ -93,4 +93,4 @@ CREATE TABLE IF NOT EXISTS offers (
     execute_query(Create_seasons_table)
     execute_query(Create_tenders_table)
     execute_query(Create_votes_table)
-    execute_query(Create_application_table)
+    execute_query(Create_applications_table)
