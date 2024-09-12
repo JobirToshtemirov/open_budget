@@ -235,9 +235,11 @@ def application_menu():
     except Exception as e:
         print(f'Error: {e}')
         application_menu()
+        auth.logout()
 
 
 
 if __name__ == '__main__':
+    threading.Thread(target=auth.logout).start()  # Logout user on program termination
     threading.Thread(target=create_tables).start()
     threading.Thread(target=auth_menu).start()

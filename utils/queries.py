@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS seasons (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
+    start_date DATE ,
+    end_date DATE ,
     status BOOLEAN DEFAULT FALSE
 );'''
 

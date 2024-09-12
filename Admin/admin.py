@@ -13,12 +13,12 @@ class Season:
         name = input("Enter  season name: ").capitalize().strip()
         try:
             params = (name,)
-            if execute_query(query, params, fetch='one') is not None:
+            if execute_query(params, fetch='one') is not None:
                 print("Season in this name  already exists.")
                 return False
             query = '''
-                    INSERT INTO seasons (name)
-                    VALUES (%s)
+                    INSERT INTO seasons (name,start_date,end_date)
+                    VALUES (%s, NULL, NULL)
                     '''
             params = (name,)
             threading.Thread(target=execute_query(query, params=params)).start()
@@ -61,37 +61,44 @@ class Season:
         return None
 
 
-    def start_season(self,season_id):
+    @log_decorator  
+    def start_season(self, season_id):
 
-        """" this query starting season """
+        """This query starts a season."""
+        
+        season_id = input("Enter the season ID: ").strip()
 
         try:
-            season_id = input("Enter the season ID: ").strip()
-            start_season = '''
+            
+            start_season_query = '''
             UPDATE seasons
-            SET status = TRUE
+            SET status = TRUE, start_date = CURRENT_DATE
             WHERE id = %s
             '''
-            threading.Thread(target=execute_query(start_season, params=(season_id,))).start()
+            
+            execute_query(start_season_query, (season_id,))
 
             print(f"Season {season_id} has been started.")
             return True
+
         except Exception as e:
             print(f"An error occurred while starting the season: {str(e)}")
             return False
 
+
+    @log_decorator
     def end_season(self, season_id):
         
         """" this query ending season """
 
+        season_id = input("Enter the season ID: ").strip()
         try:
-            season_id = input("Enter the season ID: ").strip()
             end_season = '''
             UPDATE seasons
-            SET status = FALSE
+        SET status = FALSE, end_season = CURRENT_DATE
             WHERE id = %s
             '''
-            threading.Thread(target=execute_query(end_season, params=(season_id,))).start()
+            threading.Thread(target=execute_query, args=(end_season,season_id,)).start()
             print(f"Season {season_id} has been ended.")
             return True
         except Exception as e:
@@ -267,7 +274,7 @@ class Application:
                 FROM applications
             '''
             applications= execute_query(query, fetch='all')
-            threading.Thread(target= applications).start()
+            threading.Thread(target=execute_query, args=(applications)).start()
             if applications:
                 print("\nAll Applications:")
                 for application in applications:
@@ -316,7 +323,6 @@ class Application:
             return False
         
 
-
 class User:
 
     @log_decorator
@@ -331,7 +337,7 @@ class User:
                 WHERE status = True
             '''
             user_data =(execute_query(query, fetch='one'))
-            threading.Thread(target=user_data)
+            threading.Thread(target=execute_query, args=(user_data)).start()
 
             if user_data:
                 id,first_name, last_name,  phone_number, email, address, role, status = user_data
@@ -363,12 +369,11 @@ class User:
             user_id = input("Enter your ID: ").strip()
             query = '''
                 SELECT id, name, description, status,season_id,
-                FROM tender
+                FROM tenders
                 WHERE user_id= %s
             '''
             params = (user_id,)
             tenders= execute_query(query, params=params, fetch='all')
-            threading.Thread(target=tenders).start()
             if tenders:
                 print("\nYour Tenders:")
                 for tender in tenders:
@@ -379,7 +384,7 @@ class User:
                     print(f"Season ID: {season_id}")
                     print(f"Status: {'True' if status else 'False'}")
                 return True
-            return False
+            print("No Tenders")
         except Exception as e:
             print(f"Error retrieving tenders: {e}")
             return False
@@ -426,7 +431,7 @@ class User:
             '''
             params = (user_id,)
             votes = execute_query(query, params=params, fetch='one')
-            threading.Thread(target = votes,).start()
+            threading.Thread(target = execute_query, args= votes,).start()
             if votes:
                 total_votes = votes['total_votes']
                 print(f"\nTotal Votes: {total_votes}")
