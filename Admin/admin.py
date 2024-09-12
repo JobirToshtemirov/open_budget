@@ -65,18 +65,18 @@ class Season:
     def start_season(self, season_id):
 
         """This query starts a season."""
-        
+
         season_id = input("Enter the season ID: ").strip()
 
         try:
             
-            start_season_query = '''
+            start_season = '''
             UPDATE seasons
-            SET status = TRUE, start_date = CURRENT_DATE
+            SET status = TRUE, start_date = CURRENT_TIMESTAMP, 
             WHERE id = %s
             '''
             
-            execute_query(start_season_query, (season_id,))
+            execute_query(start_season, (season_id,))
 
             print(f"Season {season_id} has been started.")
             return True
@@ -95,10 +95,10 @@ class Season:
         try:
             end_season = '''
             UPDATE seasons
-        SET status = FALSE, end_season = CURRENT_DATE
+            SET status = FALSE, end_date = CURRENT_TIMESTAMP
             WHERE id = %s
             '''
-            threading.Thread(target=execute_query, args=(end_season,season_id,)).start()
+            execute_query (end_season, season_id,)
             print(f"Season {season_id} has been ended.")
             return True
         except Exception as e:
@@ -108,37 +108,75 @@ class Season:
 
 
 class Tender:
+        
+
     @log_decorator
     def create_tender(self):
-
         """Create a new tender in the database"""
 
-        try:    
-            name = input("Enter tender name: ").capitalize().strip()
-            description = input("Enter tender description: ").strip()
-            threading.Thread(target=execute_query, args=(name,description,)).start()
-            print("Tender created successfully!")
-            return None
+        try:
+            season_id = input("Season_id: ").strip()
+            
+            season_query = '''
+            SELECT * FROM seasons WHERE id = %s
+            '''
+            
+            season = execute_query(season_query, (season_id,), fetch='one')
+            
+            if season is not None:
+                name = input("Enter tender name: ").capitalize().strip()
+                description = input("Enter tender description: ").strip()
+                
+                create_tender_query = '''
+                INSERT INTO tenders (name, description,start_date, end_date, season_id)
+                VALUES (%s, %s, NULL, NULL, %s)
+                '''
+                
+                execute_query(create_tender_query, (name, description, season_id))
+                print("Tender created successfully!")
+                return True
+            else:
+                print("Season not found.")
+                return False
+
         except Exception as e:
-            print(f"An error occurred while creating tender: {str(e)}")
+            print(f"An error occurred while creating the tender: {str(e)}")
             return False
-    
+
 
     def update_tender(self):
         
         """Update a tender in the database"""
 
-        try: 
+        try:
             tender_id = input("Enter the tender ID: ").strip()
-            name = input("Enter new name: ").capitalize().strip()
-            description = input("Enter new description: ").strip()
-            threading.Thread(target=execute_query, args=(name, description, tender_id,)).start()
-            print("Tender updated successfully!")
-            return None
+            season_id = input("Enter the season ID: ").strip()
+            
+            season_query = '''
+            SELECT * FROM seasons WHERE id = %s
+            '''
+            
+            season = execute_query(season_query, (season_id,), fetch='one')
+            
+            if season is not None:
+                name = input("Enter new tender name: ").capitalize().strip()
+                description = input("Enter new tender description: ").strip()
+                
+                update_tender_query = '''
+                UPDATE tenders
+                SET name = %s, description = %s, season_id = %s
+                WHERE id = %s
+                '''
+                
+                execute_query(update_tender_query, (name, description, season_id, tender_id))
+                print("Tender updated successfully!")
+                return True
+            else:
+                print("Season not found.")
+                return False
         except Exception as e:
             print(f"An error occurred while updating tender: {str(e)}")
             return False
-
 
     @log_decorator
     def delete_tender(self):
@@ -147,27 +185,35 @@ class Tender:
 
         try:
             tender_id = input("Enter the tender ID: ").strip()
-            query = '''DELETE  FROM tender WHERE id %s '''
-            params =(tender_id)
-            threading.Thread(target=execute_query, args=(query,params,)).start()
+            
+            delete_tender_query = '''
+            DELETE FROM tenders WHERE id = %s
+            '''
+
+            execute_query(delete_tender_query, (tender_id,))
             print("Tender deleted successfully!")
-            return None
+            return True
         except Exception as e:
             print(f"An error occurred while deleting tender: {str(e)}")
             return False
-        
+
+
+
     def start_tender(self):
         
         """" this query starting tender """
         
         try:
+            season_id = input("Enter the season ID: ").strip()
             tender_id = input("Enter the tender ID: ").strip()
+            
+            params = (season_id, tender_id,)
             start_tender = '''
-            UPDATE tender
-            SET status = TRUE
-            WHERE id = %s
+            UPDATE tenders
+            SET status = TRUE, start_date = CURRENT_TIMESTAMP, 
+            WHERE id = %s and season_id = %s
             '''
-            threading.Thread(target=execute_query(start_tender, params=(tender_id,))).start()
+            threading.Thread(target=execute_query(start_tender, params)).start()
             print(f"Tender {tender_id} has been started.")
             return True
         except Exception as e:
@@ -179,13 +225,16 @@ class Tender:
         """" this query ending tender """
         
         try:
+            season_id = input("Enter the season ID: ").strip()
             tender_id = input("Enter the tender ID: ").strip()
+            
+            params = (season_id, tender_id,)
             end_tender = '''
-            UPDATE tender
-            SET status = FALSE
+            UPDATE tenders
+            SET status = FALSE, end_date= CURRENT_TIMESTAMP
             WHERE id = %s
             '''
-            threading.Thread(target=execute_query(end_tender, params=(tender_id,))).start()
+            threading.Thread(target=execute_query(end_tender, params)).start()
             print(f"Tender {tender_id} has been ended.")
             return True
         except Exception as e:

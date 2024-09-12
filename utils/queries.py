@@ -58,8 +58,8 @@ CREATE TABLE IF NOT EXISTS tenders (
     name VARCHAR(50)NOT NULL,
     description TEXT NOT NULL,
     district INTEGER REFERENCES districts(id),
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
+    start_date DATE ,
+    end_date DATE ,
     user_id INTEGER REFERENCES users (id),
     season_id INTEGER REFERENCES seasons(id),
     status BOOLEAN DEFAULT FALSE

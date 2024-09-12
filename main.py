@@ -129,10 +129,10 @@ def season_menu():
             season.delete_season()
             season_menu()
         elif choice == '4':
-            season.start_season()
+            season.start_season(season_id=season.start_season)
             season_menu()
         elif choice == '5':
-            season.end_season()
+            season.end_season(season_id=season.end_season)
             season_menu()
         elif choice == '6':
             admin_menu()
@@ -158,18 +158,18 @@ def tender_menu():
         choice =input("Choose one of the menu: ")
         if choice == '1':
             tender.create_tender()
-            season_menu()
+            tender_menu()
         elif choice == '2':
             tender.update_tender()
-            season_menu()
+            tender_menu()
         elif choice == '3':
             tender.delete_tender()
-            season_menu()
+            tender_menu()
         elif choice == '4':
-            tender.start_tender()
-            season_menu()
+            tender.start_tender(tender.start_tender())
+            tender_menu()
         elif choice == '5':
-            tender.end_tender()
+            tender.end_tender(tender.end_tender())
             tender_menu()
         elif choice == '6':
             admin_menu()
