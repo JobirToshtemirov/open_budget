@@ -1,8 +1,14 @@
 import threading
 from Utils.queries import create_tables
 from Auth.auth import Auth
+from Admin.admin import User, Season, Tender, Statistics
 
-auth=Auth()
+user = User
+season = Season
+tender= Tender
+statistics = Statistics
+auth=Auth
+
 
 def auth_menu():
     print('''
@@ -41,7 +47,8 @@ def admin_menu():
 1. Manage season
 2. Manage tender
 3. All statistics
-4. Back to auth menu
+4. Manage application
+5. Back to auth menu
 """)
     try:
         choice =input("Choose one of the menu: ")
@@ -55,6 +62,9 @@ def admin_menu():
             statistics_menu()
             admin_menu()
         elif choice == '4':
+            user.manage_application()
+            admin_menu()
+        elif choice == '5':
             print("Back to auth menu")
             auth_menu()
         else:
@@ -75,7 +85,7 @@ def user_menu():
     try:
         choice = input("Enter your choice: ")
         if choice == '1':
-            user_profile()
+            user.user_profile()
             user_menu()
         elif choice == '2':
             user_tenders()
@@ -96,6 +106,7 @@ def user_menu():
         print(f'Error: {e}')
         user_menu()
 
+
 def season_menu():
     print("""\nWelcome to season menu:
 1. Create season
@@ -108,19 +119,19 @@ def season_menu():
     try:
         choice =input("Choose one of the menu: ")
         if choice == '1':
-            create_season()
+            season.create_season()
             season_menu()
         elif choice == '2':
-            update_season()
+            season.update_season()
             season_menu()
         elif choice == '3':
-            delete_season()
+            season.delete_season()
             season_menu()
         elif choice == '4':
-            start_season()
+            season.start_season()
             season_menu()
         elif choice == '5':
-            end_season()
+            season.end_season()
             season_menu()
         elif choice == '6':
             admin_menu()
@@ -145,19 +156,19 @@ def tender_menu():
     try:
         choice =input("Choose one of the menu: ")
         if choice == '1':
-            create_tender()
+            tender.create_tender()
             season_menu()
         elif choice == '2':
-            update_tender()
+            tender.update_tender()
             season_menu()
         elif choice == '3':
-            delete_tender()
+            tender.delete_tender()
             season_menu()
         elif choice == '4':
-            start_tender()
+            tender.start_tender()
             season_menu()
         elif choice == '5':
-            end_tender()
+            tender.end_tender()
             tender_menu()
         elif choice == '6':
             admin_menu()
@@ -180,13 +191,13 @@ def statistics_menu():
     try:
         choice =input("Choose one of the menu: ")
         if choice == '1':
-            season_menu()
+            statistics.show_all_users()
             statistics_menu()
         elif choice == '2':
-            manage_tender_menu()
+            statistics.show_all_votes()
             statistics_menu()
         elif choice == '3':
-            staticmethod_menu()
+            statistics.show_all_tenders()
             statistics_menu()
         elif choice == '4':
             admin_menu()
@@ -199,6 +210,33 @@ def statistics_menu():
         print(f'Error: {e}')
         statistics_menu()
 
+
+def application_menu():
+    print("""\nWelcome to application menu:
+1. Show all applications
+2. Accept application
+3. Refuse application
+4. Back to admin menu
+""")
+    try:
+        choice = input("Choose application: ")
+        if choice == '1':
+            show_all_applications()
+            application_menu()
+        elif choice == '2':
+            accept_application()
+            application_menu()
+        elif choice == '3':
+            refuse_application()
+            application_menu()
+        elif choice == '4':
+            admin_menu()
+    except Exception as e:
+        print(f'Error: {e}')
+        application_menu()
+
+
+
 if __name__ == '__main__':
-    threading.Thread(target=auth_menu()).start()
-    threading.Thread(target=create_tables()).start()
+    threading.Thread(target=create_tables).start()
+    threading.Thread(target=auth_menu).start()

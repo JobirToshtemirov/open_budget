@@ -46,6 +46,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS season (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     status BOOLEAN DEFAULT FALSE
 );'''
 
@@ -53,9 +55,12 @@ CREATE TABLE IF NOT EXISTS season (
     Create_tenders_table ='''
 CREATE TABLE IF NOT EXISTS tender (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users (id),
+    name VARCHAR(50)NOT NULL,
+    description TEXT NOT NULL,
     district INTEGER REFERENCES districts(id),
-    description TEXT,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    user_id INTEGER REFERENCES users (id),
     season_id INTEGER REFERENCES season(id),
     status BOOLEAN DEFAULT FALSE
 );'''
@@ -70,7 +75,7 @@ CREATE TABLE IF NOT EXISTS votes (
 );'''
 
 
-    Create_offers_table = '''
+    Create_application_table = '''
 CREATE TABLE IF NOT EXISTS offers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -88,4 +93,4 @@ CREATE TABLE IF NOT EXISTS offers (
     execute_query(Create_seasons_table)
     execute_query(Create_tenders_table)
     execute_query(Create_votes_table)
-    execute_query(Create_offers_table)
+    execute_query(Create_application_table)

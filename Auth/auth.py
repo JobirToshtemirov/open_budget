@@ -58,42 +58,44 @@ class Auth:
     
     @log_decorator
     def login(self):
-        """
-        Authenticate a user by checking their email and password.
-        Updates the user's login status to True upon successful login.
-        """
-        try:
-            passport_info: str = input("Emailingiz ga borgan loginingizni kiriting: ").strip()
-            password: str = hashlib.sha256(input("Parolingizni kiriting: ").strip().encode('utf-8')).hexdigest()
+            """
+                    Authenticate a user by checking their email and password.
+                    Updates the user's login status to True upon successful login.
+                    """
+            try:
+                passport_info: str = input("Emailingiz ga borgan loginingizni kiriting: ").strip()
+                password: str = hashlib.sha256(input("Parolingizni kiriting: ").strip().encode('utf-8')).hexdigest()
 
-            if passport_info == ADMIN_LOGIN and password == hashlib.sha256(
-                    ADMIN_PASSWORD.encode('utf-8')).hexdigest():
-                return {'is_login': True, 'role': 'admin'}
 
-            query = '''
-            SELECT role FROM users WHERE passport_info=%s AND password=%s
-            '''
-            params = (passport_info, password,)
-            user = execute_query(query, params, fetch='one')
+                if passport_info == ADMIN_LOGIN and password == hashlib.sha256(
+                        ADMIN_PASSWORD.encode('utf-8')).hexdigest():
+                    return {'is_login': True, 'role': 'admin'}
 
-            if user is None:
-                print("Invalid passport info or password.")
-                return {'is_login': False, 'role': 'user'}
 
-            # Correctly update the status for a successful login
-            update_query = 'UPDATE users SET status=TRUE WHERE passport_info=%s'
-            execute_query(update_query, params=(passport_info))
+                query = '''
+                SELECT role FROM users WHERE passport_info=%s AND password=%s
+                '''
+                params = (passport_info, password,)
+                user = execute_query(query, params, fetch='one')
 
-            return {'is_login': True, 'role': user['role']}
-        except ValueError:
-            print("Invalid input. Please try again.")
-            return None
-        except IndexError:
-            print("Email or password is incorrect.")
-            return None
-        except Exception as e:
-            print(f"An error occurred while logging in: {str(e)}")
-            return None
+                if user is None:
+                    print("Invalid passport info or password.")
+                    return {'is_login': False, 'role': 'user'}
+               
+                update_query = 'UPDATE users SET status=TRUE WHERE passport_info=%s'
+                execute_query(update_query, params=(passport_info,))
+
+                return {'is_login': True, 'role': user[0]} 
+            except ValueError:
+                print("Invalid input. Please try again.")
+                return None
+            except IndexError:
+                print("Email or password is incorrect.")
+                return None
+            except Exception as e:
+                print(f"An error occurred while logging in: {str(e)}")
+                return None
+
 
     @log_decorator
     def logout(self):
