@@ -72,7 +72,7 @@ class Season:
             
             start_season = '''
             UPDATE seasons
-            SET status = TRUE, start_date = CURRENT_TIMESTAMP, 
+            SET status = TRUE, start_date = CURRENT_TIMESTAMP 
             WHERE id = %s
             '''
             
@@ -198,48 +198,70 @@ class Tender:
             return False
 
 
-
+    @log_decorator
     def start_tender(self):
-        
-        """" this query starting tender """
-        
+        """This query starts a tender."""
+    
         try:
             season_id = input("Enter the season ID: ").strip()
             tender_id = input("Enter the tender ID: ").strip()
+
+            season_query = 'SELECT season_id FROM tenders WHERE season_id = %s'
+            tender_query = 'SELECT id FROM tenders WHERE id = %s'
             
-            params = (season_id, tender_id,)
-            start_tender = '''
-            UPDATE tenders
-            SET status = TRUE, start_date = CURRENT_TIMESTAMP, 
-            WHERE id = %s and season_id = %s
-            '''
-            threading.Thread(target=execute_query(start_tender, params)).start()
-            print(f"Tender {tender_id} has been started.")
-            return True
+            season = execute_query(season_query, (season_id,), fetch='one')
+            tender = execute_query(tender_query, (tender_id,), fetch='one')
+            
+            if season and tender:
+                params = (tender_id, season_id)
+                start_tender_query = '''
+                    UPDATE tenders
+                    SET status = TRUE, start_date = CURRENT_TIMESTAMP
+                    WHERE id = %s AND season_id = %s
+                '''
+                
+                threading.Thread(target=execute_query, args=(start_tender_query, params)).start()
+                print(f"Tender {tender_id} has been started.")
+                return True
+            else:
+                print("Season or Tender not found.")
+                return False
         except Exception as e:
             print(f"An error occurred while starting the tender: {str(e)}")
             return False
-        
+
+    @log_decorator
     def end_tender(self):
-        
-        """" this query ending tender """
-        
+        """This query ends a tender."""
+    
         try:
             season_id = input("Enter the season ID: ").strip()
             tender_id = input("Enter the tender ID: ").strip()
+
+            season_query = 'SELECT season_id FROM tenders WHERE season_id = %s'
+            tender_query = 'SELECT id FROM tenders WHERE id = %s'
             
-            params = (season_id, tender_id,)
-            end_tender = '''
-            UPDATE tenders
-            SET status = FALSE, end_date= CURRENT_TIMESTAMP
-            WHERE id = %s
-            '''
-            threading.Thread(target=execute_query(end_tender, params)).start()
-            print(f"Tender {tender_id} has been ended.")
-            return True
+            season = execute_query(season_query, (season_id,), fetch='one')
+            tender = execute_query(tender_query, (tender_id,), fetch='one')
+            
+            if season and tender:
+                params = (tender_id,)
+                end_tender_query = '''
+                    UPDATE tenders
+                    SET status = FALSE, end_date = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                '''
+                
+                threading.Thread(target=execute_query, args=(end_tender_query, params)).start()
+                print(f"Tender {tender_id} has been ended.")
+                return True
+            else:
+                print("Season or Tender not found.")
+                return False
         except Exception as e:
             print(f"An error occurred while ending the tender: {str(e)}")
             return False
+
         
 class Statistics:
 
@@ -295,7 +317,7 @@ class Statistics:
         try:
             query = '''
                 SELECT id, name, description, status
-                FROM tender
+                FROM tenders
             '''
             tenders = execute_query(query, fetch='all')
             threading.Thread(target=execute_query, args=(query,tenders)).start()

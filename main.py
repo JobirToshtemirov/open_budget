@@ -2,7 +2,7 @@ import threading
 from Utils.queries import create_tables
 from Auth.auth import Auth
 from Admin.admin import User, Season, Tender, Statistics, Application
-
+from Utils.add_info_for_table import add_info_to_table
 user = User()
 season = Season()
 tender= Tender()
@@ -242,4 +242,5 @@ def application_menu():
 if __name__ == '__main__':
     threading.Thread(target=auth.logout).start()  # Logout user on program termination
     threading.Thread(target=create_tables).start()
+    threading.Thread(target=add_info_to_table).start()
     threading.Thread(target=auth_menu).start()
