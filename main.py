@@ -2,7 +2,10 @@ import threading
 from Utils.queries import create_tables
 from Auth.auth import Auth
 from Admin.admin import User, Season, Tender, Statistics, Application
+from Users.user import Vote
 from Utils.add_info_for_table import add_info_to_table
+
+vote = Vote()
 user = User()
 season = Season()
 tender= Tender()
@@ -75,29 +78,58 @@ def admin_menu():
         print(f'Error: {e}')
         admin_menu()
 
+
+def user_first_menu():
+    print("""\nWelcome to the first  user's menu:
+        Choose an option:
+1. Vote for tender
+2. Send application
+3. My profile
+4. Get info about my actions
+""")
+    try:
+        choice = input("Choose an option: ")
+        if choice == '1':
+            vote.get_active_tenders()
+            vote.vote_for_tender()
+            user_first_menu()
+        elif choice == '2':
+            vote.get_active_seasons()
+            vote.send_application()
+            user_first_menu()
+        elif choice == '3':
+            user.user_profile()
+            user_first_menu()
+        elif choice == '4':
+            user_menu()
+        else:
+            print("Invalid input")
+            user_first_menu()
+    except Exception as e:
+        print(f'Error: {e}')
+        user_first_menu()
+          
+
+
 def user_menu():
     print("""\nWelcome to user menu:   
-1. My profile
-2. My tenders
-3. My applications
-4. My votes
-5. Back to auth menu
+1. My tenders
+2. My applications
+3. My votes
+4. Back to auth menu
 """)
     try:
         choice = input("Enter your choice: ")
         if choice == '1':
-            user.user_profile()
-            user_menu()
-        elif choice == '2':
             user.user_tenders()
             user_menu()
-        elif choice == '3':
+        elif choice == '2':
             user.user_applications()
             user_menu()
-        elif choice == '4':
+        elif choice == '3':
             user.user_votes()
             user_menu()
-        elif choice == '5':
+        elif choice == '4':
             print("Back to auth menu")
             auth_menu()
         else:
@@ -146,7 +178,7 @@ def season_menu():
 
 
 def tender_menu():
-    print("""\nWelcome to season menu:
+    print("""\nWelcome to tender menu:
 1. Create tender
 2. Update tender
 3. Delete tender
@@ -240,7 +272,7 @@ def application_menu():
 
 
 if __name__ == '__main__':
-    threading.Thread(target=auth.logout).start()  # Logout user on program termination
+    threading.Thread(target=auth.logout).start()
     threading.Thread(target=create_tables).start()
     threading.Thread(target=add_info_to_table).start()
     threading.Thread(target=auth_menu).start()
