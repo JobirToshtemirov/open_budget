@@ -46,6 +46,7 @@ class Auth:
             params = (first_name, last_name, phone_number, email, hash_pass, passport_info, address, role)
             execute_query(query, params=params)
             print("Registration successfully")
+            print("\nYour login and password sended your email address")
             return True
         except ValueError:
             print("Invalid input. Please try again.")

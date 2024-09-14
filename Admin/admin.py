@@ -62,24 +62,20 @@ class Season:
 
 
     @log_decorator  
-    def start_season(season_id):
+    def start_season(self):
 
         """This query starts a season."""
 
         season_id = input("Enter the season ID: ").strip()
 
         try:
-            start_season1 ='''
-            UPDATE seasons SET  status = FALSE FROM seasons
-            '''
-            
             start_season = '''
             UPDATE seasons
             SET status = TRUE, start_date = CURRENT_TIMESTAMP 
             WHERE id = %s
             '''
             
-            execute_query(start_season1, start_season, (season_id,))
+            execute_query(start_season, (season_id,))
 
             print(f"Season {season_id} has been started.")
             return True
@@ -87,6 +83,7 @@ class Season:
         except Exception as e:
             print(f"An error occurred while starting the season: {str(e)}")
             return False
+
 
 
     @log_decorator
@@ -146,7 +143,7 @@ class Tender:
             print(f"An error occurred while creating the tender: {str(e)}")
             return False
 
-
+    @log_decorator
     def update_tender(self):
         
         """Update a tender in the database"""
@@ -180,6 +177,7 @@ class Tender:
         except Exception as e:
             print(f"An error occurred while updating tender: {str(e)}")
             return False
+
 
     @log_decorator
     def delete_tender(self):
@@ -224,7 +222,7 @@ class Tender:
                 '''
                 
                 threading.Thread(target=execute_query, args=(start_tender_query, params)).start()
-                print(f"Tender {tender_id} has been started.")
+                print(f"\nTender {tender_id} has been started.")
                 return True
             else:
                 print("Season or Tender not found.")
@@ -256,7 +254,7 @@ class Tender:
                 '''
                 
                 threading.Thread(target=execute_query, args=(end_tender_query, params)).start()
-                print(f"Tender {tender_id} has been ended.")
+                print(f"\nTender {tender_id} has been ended.")
                 return True
             else:
                 print("Season or Tender not found.")
@@ -272,25 +270,50 @@ class Statistics:
     def show_all_users(user):
         try:
             query = '''
-                SELECT id, first_name, last_name, phone_number, email
+                SELECT id, first_name, last_name, phone_number, email, status
                 FROM users
             '''
             users = execute_query(query = query, fetch='all')
             if users:
                 print("\n\t\t\tAll Users:\n")
                 for user in users:
-                    id, first_name, last_name, phone_number, email = user
+                    id, first_name, last_name, phone_number, email, status = user
                     print(f"\t\t\tid: {id}")
                     print(f"\t\t\tName: {first_name}")
                     print(f"\t\t\tLast Name: {last_name}")
                     print(f"\t\t\tPhone_number:{phone_number} ")
-                    print(f"\t\t\tEmail: {email}\n")
+                    print(f"\t\t\tEmail: {email}")
+                    print(f"\t\t\tStatus: {status}\n")
                 return True
             print("User not found")
         except Exception as e:
             print(f"An error occurred while retrieving users: {str(e)}")
             return False
     threading.Thread(target=show_all_users,)
+
+
+    @log_decorator
+    def show_all_seasons(seasons):
+        try:
+            query = '''
+                SELECT id, name, start_date, end_date
+                FROM seasons
+            '''
+            seasons = execute_query(query=query, fetch='all')
+            threading.Thread(target=execute_query, args=(query, seasons)).start()
+            if seasons:
+                print("\n\t\t\tAll Seasons:\n")
+                for season in seasons:
+                    id, name, start_date, end_date = season
+                    print(f"\t\t\tID: {id}")
+                    print(f"\t\t\tName: {name}")
+                    print(f"\t\t\tStart Date: {start_date}")
+                    print(f"\t\t\tEnd Date: {end_date}\n")
+                return True
+            return False
+        except Exception as e:
+            print(f"An error occurred while retrieving seasons: {str(e)}")
+
 
     def show_all_votes(votes):
         try:
@@ -306,20 +329,22 @@ class Statistics:
                 for vote in votes:
                     total_votes, user_id = vote
                     print(f"\t\t\tUser ID: {user_id}")
-                    print(f"\t\t\tTotal Votes: {total_votes}")
+                    print(f"\t\t\tTotal Votes: {total_votes}\n")
                 return True
             return False
         except Exception as e:
             print(f"An error occurred while retrieving votes: {str(e)}")
             return False
         
+
+    @log_decorator  
     def show_all_tenders(tenders):
 
         """Show all tenders in the database"""
 
         try:
             query = '''
-                SELECT id, name, description, status
+                SELECT id, name, description,start_date, end_date, status
                 FROM tenders
             '''
             tenders = execute_query(query=query, fetch='all')
@@ -327,20 +352,75 @@ class Statistics:
             if tenders:
                 print("\n\t\t\tAll Tenders:\n")
                 for tender in tenders:
-                    id, name, description, status = tender
+                    id, name, description, start_date, end_date, status = tender
                     print(f"\t\t\tID: {id}")
                     print(f"\t\t\tName: {name}")
                     print(f"\t\t\tDescription: {description}")
+                    print(f"\t\t\tStart Date: {start_date}")
+                    print(f"\t\t\tEnd Date: {end_date}")
                     print(f"\t\t\tStatus: {'True' if status else 'False'}\n")
                 return True
             return False
         except Exception as e:
             print(f"An error occurred while retrieving tenders: {str(e)}")
             return False
+        
+
+    @log_decorator    
+    def show_active_season(self):
+        try:
+            query = '''
+                SELECT id, name, start_date, end_date
+                FROM seasons
+                WHERE status = TRUE
+            '''
+            season = execute_query(query=query, fetch='one')
+            threading.Thread(target=execute_query, args=(query, season)).start()
+            if season:
+                id, name, start_date, end_date = season
+                print(f"\n\t\tActive Season:\n")
+                print(f"\t\tID: {id}")
+                print(f"\t\tName: {name}")
+                print(f"\t\tStart Date: {start_date}")
+                print(f"\t\tEnd Date: {end_date}\n")
+                return True
+            return False
+        except Exception as e:
+            print(f"An error occurred while retrieving active season: {str(e)}")
+
+
+    @log_decorator
+    def show_active_tenders(self):
+
+        """Retrieve and display all active tenders."""
+
+        try:
+            query = '''
+                SELECT id, name, description, season_id, status FROM tenders WHERE status = TRUE
+            '''
+            tenders = execute_query(query, fetch='all')
+
+            if tenders:
+                for tender in tenders:
+                    tender_id, name, description, season_id, status = tender
+                    print(f"\n\t\t\tTender ID: {tender_id}")
+                    print(f"\t\t\tName: {name}")
+                    print(f"\t\t\tDescription: {description}")
+                    print(f"\t\t\tSeason ID: {season_id}")
+                    print(f"\t\t\tStatus: {'Active' if status else 'Inactive'}\n")
+            else:
+                print("No active tenders found.")
             
+            return True
+
+        except Exception as e:
+            print(f"An error occurred while retrieving active tenders: {str(e)}")
+            return False
+
+
 
 class Application:
-
+    @log_decorator
     def show_all_applications(self):
         try:
             query = '''
@@ -365,7 +445,7 @@ class Application:
             print(f"An error occurred while retrieving applications: {str(e)}")
             return False
 
-
+    @log_decorator
     def accept_application(self):
         try:
             application_id = input("Enter the application ID: ").strip()
@@ -380,7 +460,8 @@ class Application:
         except Exception as e:
             print(f"An error occurred while accepting application: {str(e)}")
             return False
-        
+
+    @log_decorator   
     def refuse_application(self):
         try:
             application_id = input("Enter the application ID: ").strip()
@@ -400,7 +481,7 @@ class Application:
 class User:
 
     @log_decorator
-    def user_profile(self):
+    def user_profile(user_data):
 
         """Show user's profile information"""
 
@@ -428,7 +509,6 @@ class User:
             else:
                 print("Profile not found.")
                 return False
-
         except Exception as e:
             print(f"Error retrieving profile: {e}")
             return False
@@ -494,22 +574,46 @@ class User:
         
     @log_decorator
     def user_votes(self):
+
+        """Retrieve and display the number of votes a user has cast."""
+
         try:
             user_id = input("Enter your ID: ").strip()
+
+            query1 = '''
+                SELECT tender_id, season_id FROM votes
+                WHERE user_id = %s
+            '''
+            
+            
             query = '''
                 SELECT COUNT(*) AS total_votes
                 FROM votes
-                WHERE user_id= %s
+                WHERE user_id = %s
             '''
-            params = (user_id,)
-            votes = execute_query(query, params=params, fetch='one')
-            threading.Thread(target = execute_query, args= votes,).start()
+            
+
+            votes = execute_query(query1, (user_id,), fetch='all')  
+            total_votes_result = execute_query(query, (user_id,), fetch='one') 
+
             if votes:
-                total_votes = votes['total_votes']
-                print(f"\n\t\t\tYour total Votes = {total_votes}")
-                return True
-            return False
+                print("\n\t\t\tYour Votes:\n")
+                for vote in votes:
+                    tender_id, season_id = vote
+                    print(f"\t\t\tTender ID: {tender_id}")
+                    print(f"\t\t\tSeason ID: {season_id}\n")
+            else:
+                print("No votes found.")
+            
+            if total_votes_result:
+                total_votes = total_votes_result[0]  
+                print(f"\t\tYour total votes : {total_votes}")
+            else:
+                print("No votes found.")
+            return True
         except Exception as e:
             print(f"Error retrieving votes: {e}")
             return False
-        
+
+
+            

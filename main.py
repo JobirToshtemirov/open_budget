@@ -90,11 +90,12 @@ Choose an option:\n
     try:
         choice = input("Choose an option: ")
         if choice == '1':
-            vote.get_active_tenders()
+            statistics.show_active_season()
+            statistics.show_active_tenders()
             vote.vote_for_tender()
             user_first_menu()
         elif choice == '2':
-            vote.get_active_seasons()
+            statistics.show_active_season()
             vote.send_application()
             user_first_menu()
         elif choice == '3':
@@ -116,7 +117,8 @@ def user_menu():
 1. My tenders
 2. My applications
 3. My votes
-4. Back to auth menu
+4. Back to firts user menu
+5. Back to auth menu
 """)
     try:
         choice = input("Enter your choice: ")
@@ -130,6 +132,9 @@ def user_menu():
             user.user_votes()
             user_menu()
         elif choice == '4':
+            print("Back to first user menu")
+            user_first_menu()
+        elif choice == '5':
             print("Back to auth menu")
             auth_menu()
         else:
@@ -161,10 +166,10 @@ def season_menu():
             season.delete_season()
             season_menu()
         elif choice == '4':
-            season.start_season(season_id=season.start_season)
+            season.start_season()
             season_menu()
         elif choice == '5':
-            season.end_season(season_id=season.end_season)
+            season.end_season()
             season_menu()
         elif choice == '6':
             admin_menu()
@@ -218,8 +223,10 @@ def statistics_menu():
 1. Show all users
 2. Show all votes 
 3. Show all tenders
-4. Back to admin menu
-5. Back to auth menu
+4. Show all seasons
+5. Show all applications
+6  Back to admin menu
+7. Back to auth menu
 """)
     try:
         choice =input("Choose one of the menu: ")
@@ -233,9 +240,17 @@ def statistics_menu():
             statistics.show_all_tenders()
             statistics_menu()
         elif choice == '4':
-            admin_menu()
+            statistics.show_all_seasons()
+            statistics_menu()
         elif choice == '5':
-            auth_menu()
+            application.show_all_applications()
+            statistics_menu()
+        elif choice == '6':
+            print("Back to admin menu")
+            admin_menu()
+        elif choice == '7':
+            print("Back to auth menu")
+            auth_menu()  
         else:
             print("Invalid input")
             statistics_menu()
