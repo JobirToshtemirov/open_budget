@@ -2,7 +2,7 @@ import threading
 from Utils.queries import create_tables
 from Auth.auth import Auth
 from Admin.admin import User, Season, Tender, Statistics, Application
-from Users.user import Vote
+from User.user import Vote
 from Utils.add_info_for_table import add_info_to_table
 
 vote = Vote()
@@ -33,7 +33,7 @@ def auth_menu():
                 admin_menu()
                 auth_menu()
             elif result_login['role'] == 'user':
-                user_menu()
+                user_first_menu()
                 auth_menu()
         elif user_input == 3:
             print("\nGood bye!")
@@ -81,7 +81,7 @@ def admin_menu():
 
 def user_first_menu():
     print("""\nWelcome to the first  user's menu:
-        Choose an option:
+Choose an option:\n
 1. Vote for tender
 2. Send application
 3. My profile
@@ -257,9 +257,11 @@ def application_menu():
             application.show_all_applications()
             application_menu()
         elif choice == '2':
+            application.show_all_applications()
             application.accept_application()
             application_menu()
         elif choice == '3':
+            application.show_all_applications()
             application.refuse_application()
             application_menu()
         elif choice == '4':

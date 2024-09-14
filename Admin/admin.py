@@ -62,13 +62,16 @@ class Season:
 
 
     @log_decorator  
-    def start_season(self, season_id):
+    def start_season(season_id):
 
         """This query starts a season."""
 
         season_id = input("Enter the season ID: ").strip()
 
         try:
+            start_season1 ='''
+            UPDATE seasons SET  status = FALSE FROM seasons
+            '''
             
             start_season = '''
             UPDATE seasons
@@ -76,7 +79,7 @@ class Season:
             WHERE id = %s
             '''
             
-            execute_query(start_season, (season_id,))
+            execute_query(start_season1, start_season, (season_id,))
 
             print(f"Season {season_id} has been started.")
             return True
@@ -87,7 +90,7 @@ class Season:
 
 
     @log_decorator
-    def end_season(self, season_id):
+    def end_season(season_id):
         
         """" this query ending season """
 
@@ -241,8 +244,8 @@ class Tender:
             season_query = 'SELECT season_id FROM tenders WHERE season_id = %s'
             tender_query = 'SELECT id FROM tenders WHERE id = %s'
             
-            season = execute_query(season_query, (season_id,), fetch='one')
-            tender = execute_query(tender_query, (tender_id,), fetch='one')
+            season = execute_query(season_query , (season_id,), fetch='one')
+            tender = execute_query(tender_query , (tender_id,), fetch='one')
             
             if season and tender:
                 params = (tender_id,)
@@ -266,22 +269,22 @@ class Tender:
 class Statistics:
 
     @log_decorator
-    def show_all_users(self):
+    def show_all_users(user):
         try:
             query = '''
                 SELECT id, first_name, last_name, phone_number, email
                 FROM users
             '''
-            users = execute_query(query, fetch='all')
+            users = execute_query(query = query, fetch='all')
             if users:
-                print("\nAll Users:")
+                print("\n\t\t\tAll Users:\n")
                 for user in users:
                     id, first_name, last_name, phone_number, email = user
-                    print(f"id: {id}")
-                    print(f"Name: {first_name}")
-                    print(f"Last Name: {last_name}")
-                    print(f"Phone_number:{phone_number} ")
-                    print(f"Email: {email}")
+                    print(f"\t\t\tid: {id}")
+                    print(f"\t\t\tName: {first_name}")
+                    print(f"\t\t\tLast Name: {last_name}")
+                    print(f"\t\t\tPhone_number:{phone_number} ")
+                    print(f"\t\t\tEmail: {email}\n")
                 return True
             print("User not found")
         except Exception as e:
@@ -296,14 +299,14 @@ class Statistics:
                 FROM votes
                 GROUP BY user_id
             '''
-            votes = execute_query(query, fetch='all')
-            threading.Thread(execute_query, args=(query,votes)).start()
+            votes = execute_query(query = query, fetch='all')
+            threading.Thread(target = execute_query, args=(query, votes)).start()
             if votes:
-                print("\nTotal Votes:")
+                print("\n\t\t\tTotal Votes:\n")
                 for vote in votes:
                     total_votes, user_id = vote
-                    print(f"User ID: {user_id}")
-                    print(f"Total Votes: {total_votes}")
+                    print(f"\t\t\tUser ID: {user_id}")
+                    print(f"\t\t\tTotal Votes: {total_votes}")
                 return True
             return False
         except Exception as e:
@@ -319,16 +322,16 @@ class Statistics:
                 SELECT id, name, description, status
                 FROM tenders
             '''
-            tenders = execute_query(query, fetch='all')
+            tenders = execute_query(query=query, fetch='all')
             threading.Thread(target=execute_query, args=(query,tenders)).start()
             if tenders:
-                print("\nAll Tenders:")
+                print("\n\t\t\tAll Tenders:\n")
                 for tender in tenders:
                     id, name, description, status = tender
-                    print(f"ID: {id}")
-                    print(f"Name: {name}")
-                    print(f"Description: {description}")
-                    print(f"Status: {'True' if status else 'False'}")
+                    print(f"\t\t\tID: {id}")
+                    print(f"\t\t\tName: {name}")
+                    print(f"\t\t\tDescription: {description}")
+                    print(f"\t\t\tStatus: {'True' if status else 'False'}\n")
                 return True
             return False
         except Exception as e:
@@ -344,18 +347,18 @@ class Application:
                 SELECT id, name, description, status, season_id, user_id
                 FROM applications
             '''
-            applications= execute_query(query, fetch='all')
+            applications= execute_query(query=query, fetch='all')
             threading.Thread(target=execute_query, args=(applications)).start()
             if applications:
-                print("\nAll Applications:")
+                print("\n\t\t\tAll Applications:\n")
                 for application in applications:
                     id, name, description, status ,season_id, user_id = application
-                    print(f"ID: {id}")
-                    print(f"Name: {name}") 
-                    print(f"Description: {description}")
-                    print(f"Status: {'True' if status else 'False'}")
-                    print(f"Season ID: {season_id}")
-                    print(f"User ID: {user_id}")
+                    print(f"\t\t\tID: {id}")
+                    print(f"\t\t\tName: {name}") 
+                    print(f"\t\t\tDescription: {description}")
+                    print(f"\t\t\tStatus: {'True' if status else 'False'}")
+                    print(f"\t\t\tSeason ID: {season_id}")
+                    print(f"\t\t\tUser ID: {user_id}\n")
                 return True
             return False
         except Exception as e:
@@ -363,7 +366,7 @@ class Application:
             return False
 
 
-    def accept_application():
+    def accept_application(self):
         try:
             application_id = input("Enter the application ID: ").strip()
             accept_application = '''
@@ -378,7 +381,7 @@ class Application:
             print(f"An error occurred while accepting application: {str(e)}")
             return False
         
-    def refuse_application():
+    def refuse_application(self):
         try:
             application_id = input("Enter the application ID: ").strip()
             refuse_application = '''
@@ -412,15 +415,15 @@ class User:
 
             if user_data:
                 id,first_name, last_name,  phone_number, email, address, role, status = user_data
-                print("\nYour Profile:")
-                print(f"id:{id}")
-                print(f"Name: {first_name}")
-                print(f"Last Name: {last_name}")
-                print(f"Phone Number: {phone_number}")
-                print(f"Email: {email}")
-                print(f"Address: {address}")
-                print(f"Role: {role.capitalize()}")
-                print(f"Status: {'True' if status else 'False'}")
+                print("\n\t\t\tYour Profile:\n")
+                print(f"\t\t\tid:{id}")
+                print(f"\t\t\tName: {first_name}")
+                print(f"\t\t\tLast Name: {last_name}")
+                print(f"\t\t\tPhone Number: {phone_number}")
+                print(f"\t\t\tEmail: {email}")
+                print(f"\t\t\tAddress: {address}")
+                print(f"\t\t\tRole: {role.capitalize()}")
+                print(f"\t\t\tStatus: {'True' if status else 'False'}\n")
                 return True
             else:
                 print("Profile not found.")
@@ -439,21 +442,19 @@ class User:
         try:
             user_id = input("Enter your ID: ").strip()
             query = '''
-                SELECT id, name, description, status,season_id,
-                FROM tenders
+                SELECT tender_id, season_id, user_id
+                FROM votes
                 WHERE user_id= %s
             '''
             params = (user_id,)
             tenders= execute_query(query, params=params, fetch='all')
             if tenders:
-                print("\nYour Tenders:")
+                print("\n\t\t\tYour Tenders:\n")
                 for tender in tenders:
-                    id, name, description,season_id, status= tender
-                    print(f"ID: {id}")
-                    print(f"Name: {name}")
-                    print(f"Description: {description}")
-                    print(f"Season ID: {season_id}")
-                    print(f"Status: {'True' if status else 'False'}")
+                    tender_id, season_id , status = tender
+                    print(f"\t\t\tTender_id: {tender_id}")
+                    print(f"\t\t\tSeason ID: {season_id}")
+                    print(f"\t\t\tStatus: {'True' if status else 'False'}\n")
                 return True
             print("No Tenders")
         except Exception as e:
@@ -475,20 +476,20 @@ class User:
             params = (user_id,)
             applications =execute_query(query, params=params, fetch='all')
             if applications:
-                print("\nYour Applications:")
+                print("\n\t\t\tYour Applications:\n")
                 for application in applications:
                     id, name, description, status,  season_id = application
-                    print(f"ID: {id}")
-                    print(f"Name: {name}")
-                    print(f"Description: {description}")
-                    print(f"Status: {'True' if status else 'False'}")
-                    print(f"Season ID: {season_id}")
+                    print(f"\t\t\tID: {id}")
+                    print(f"\t\t\tName: {name}")
+                    print(f"\t\t\tDescription: {description}")
+                    print(f"\t\t\tStatus: {'True' if status else 'False'}")
+                    print(f"\t\t\tSeason ID: {season_id}\n")
                 return True
             print("No Applications")
         except Exception as e:
             print(f"Error retrieving applications: {e}")
             return False
-    threading.Thread(target = user_applications).start()
+    threading.Thread(target = user_applications,).start()
             
         
     @log_decorator
@@ -505,7 +506,7 @@ class User:
             threading.Thread(target = execute_query, args= votes,).start()
             if votes:
                 total_votes = votes['total_votes']
-                print(f"\nTotal Votes: {total_votes}")
+                print(f"\n\t\t\tYour total Votes = {total_votes}")
                 return True
             return False
         except Exception as e:

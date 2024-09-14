@@ -70,15 +70,17 @@ def create_tables():
         UNIQUE (user_id, season_id, tender_id)
     );'''
 
+
     Create_applications_table = '''
-    CREATE TABLE IF NOT EXISTS applications (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        description TEXT,
-        status BOOLEAN DEFAULT FALSE,
-        season_id INTEGER REFERENCES seasons(id),
-        user_id INTEGER REFERENCES users(id)
-    );'''
+   CREATE TABLE IF NOT EXISTS applications (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    status BOOLEAN DEFAULT FALSE,
+    season_id INTEGER REFERENCES seasons(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
+);'''
+
 
 
 
